@@ -1,0 +1,22 @@
+name: release
+on:
+  release:
+    types: [ created ]
+
+jobs:
+  releases-matrix:
+    name: Release binary
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # build and publish in parallel: linux/amd64, windows/amd64
+        goos: [linux, windows]
+        goarch: [amd64]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: wangyoucao577/go-release-action@v1.32
+        with:
+          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          goos: ${{ matrix.goos }}
+          goarch: ${{ matrix.goarch }}
+          extra_files: LICENSE.md README.md
