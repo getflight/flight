@@ -4,5 +4,5 @@ type VersionService struct {
 }
 
 func (s *VersionService) GetVersion() string {
-	return "v0.1.0-alpha"
+	return "v0.1.1-alpha"
 }
