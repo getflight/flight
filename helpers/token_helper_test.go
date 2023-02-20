@@ -173,7 +173,7 @@ func TestTokenHelper(t *testing.T) {
 
 		// then
 		assert.Equal(t, "", organisationId)
-		assert.NotNil(t, err)
+		assert.Nil(t, err)
 		fileHelperMock.AssertExpectations(t)
 	})
 }

@@ -15,7 +15,7 @@ import (
 
 const (
 	flightWorkPath       = "/.flight/"
-	buildWorkPath        = "build/"
+	buildWorkPath        = "build"
 	bootstrapFilename    = "bootstrap"
 	executableFilename   = "main"
 	organisationFilename = "organisation"
@@ -55,7 +55,7 @@ func (h *FileHelper) Package(manifest models.Manifest) (string, error) {
 	}
 
 	// Get the file handle
-	content, err := h.ReadFile(buildWorkPath + zipFilename)
+	content, err := h.ReadFile(filepath.Join(buildWorkPath, zipFilename))
 
 	if err != nil {
 		return "", errors.WithStack(err)
@@ -144,7 +144,7 @@ func (h *FileHelper) openFile(filename string) (afero.File, error) {
 
 func (h *FileHelper) writeZip(zipFilename string, manifest models.Manifest) error {
 
-	zipPath, err := h.getWorkPath(buildWorkPath + zipFilename)
+	zipPath, err := h.getWorkPath(filepath.Join(buildWorkPath, zipFilename))
 
 	if err != nil {
 		return errors.WithStack(err)

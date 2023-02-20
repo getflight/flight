@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"io/fs"
 	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -24,7 +25,7 @@ func TestFileHelper(t *testing.T) {
 
 		// then
 		assert.Nil(t, err)
-		assert.Equal(t, "home\\.flight\\test", workPath)
+		assert.Equal(t, filepath.Join("home", ".flight", "test"), workPath)
 		fileSystemMock.AssertExpectations(t)
 	})
 
@@ -42,15 +43,18 @@ func TestFileHelper(t *testing.T) {
 
 		// then
 		assert.Nil(t, err)
-		assert.Equal(t, "work\\.flight\\test", workPath)
+		assert.Equal(t, filepath.Join("work", ".flight", "test"), workPath)
 		fileSystemMock.AssertExpectations(t)
+
+		// revert
+		UserWorkPath = ""
 	})
 
 	t.Run("prepareWrite creates work directory", func(t *testing.T) {
 		// given
 		fileSystemMock := &mocks.FileSystemMock{}
 		fileSystemMock.On("UserHomeDir").Return("home", nil)
-		fileSystemMock.On("MkdirAll", "home\\.flight\\build\\", os.ModeDir).Return(nil)
+		fileSystemMock.On("MkdirAll", filepath.Join("home", ".flight", "build"), os.ModeDir).Return(nil)
 
 		fileHelper := FileHelper{FileSystem: fileSystemMock}
 
@@ -67,8 +71,8 @@ func TestFileHelper(t *testing.T) {
 		value := "test"
 		fileSystemMock := &mocks.FileSystemMock{}
 		fileSystemMock.On("UserHomeDir").Return("home", nil)
-		fileSystemMock.On("MkdirAll", "home\\.flight\\build\\", os.ModeDir).Return(nil)
-		fileSystemMock.On("WriteFile", "home\\.flight\\token", []byte(value), fs.FileMode(0644)).Return(nil)
+		fileSystemMock.On("MkdirAll", filepath.Join("home", ".flight", "build"), os.ModeDir).Return(nil)
+		fileSystemMock.On("WriteFile", filepath.Join("home", ".flight", "token"), []byte(value), fs.FileMode(0644)).Return(nil)
 
 		fileHelper := FileHelper{FileSystem: fileSystemMock}
 
@@ -85,7 +89,7 @@ func TestFileHelper(t *testing.T) {
 		value := "test"
 		fileSystemMock := &mocks.FileSystemMock{}
 		fileSystemMock.On("UserHomeDir").Return("home", nil)
-		fileSystemMock.On("ReadFile", "home\\.flight\\token").Return([]byte(value), nil)
+		fileSystemMock.On("ReadFile", filepath.Join("home", ".flight", "token")).Return([]byte(value), nil)
 
 		fileHelper := FileHelper{FileSystem: fileSystemMock}
 
@@ -105,7 +109,7 @@ func TestFileHelper(t *testing.T) {
 
 		fileSystemMock := &mocks.FileSystemMock{}
 		fileSystemMock.On("UserHomeDir").Return("home", nil)
-		fileSystemMock.On("Open", "home\\.flight\\token").Return(f, nil)
+		fileSystemMock.On("Open", filepath.Join("home", ".flight", "token")).Return(f, nil)
 
 		fileHelper := FileHelper{FileSystem: fileSystemMock}
 
@@ -124,7 +128,7 @@ func TestFileHelper(t *testing.T) {
 
 		fileSystemMock := &mocks.FileSystemMock{}
 		fileSystemMock.On("UserHomeDir").Return("home", nil)
-		fileSystemMock.On("Create", "home\\.flight\\build\\main").Return(f, nil)
+		fileSystemMock.On("Create", filepath.Join("home", ".flight", "build", "main")).Return(f, nil)
 		fileSystemMock.On("ReadFile", "test-name").Return([]byte{}, nil)
 
 		fileHelper := FileHelper{FileSystem: fileSystemMock}
